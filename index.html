@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Typing Speed Test</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --error-color: #e74c3c;
+            --warning-color: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        #game-container, #auth-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        #sentence-container {
+            background-color: var(--background-color);
+            border-radius: 5px;
+            padding: 1rem;
+            font-size: 1.2rem;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+        }
+
+        #user-input {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 5px;
+            resize: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #user-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        #stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        button, .input-field {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .input-field {
+            background-color: #fff;
+            color: var(--text-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .highlight {
+            background-color: var(--secondary-color);
+            color: #fff;
+        }
+
+        .error {
+            background-color: var(--error-color);
+            color: #fff;
+        }
+
+        #high-scores {
+            margin-top: 1rem;
+        }
+
+        #high-scores h3 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        #high-scores ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #high-scores li {
+            background-color: var(--background-color);
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+        }
+
+        #cookie-message {
+            background-color: var(--warning-color);
+            color: var(--text-color);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        #cookie-code {
+            font-family: monospace;
+            background-color: #fff;
+            padding: 0.5rem;
+            border-radius: 3px;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 1rem;
+            }
+
+            #sentence-container {
+                font-size: 1rem;
+            }
+
+            #stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Typing Speed Test</h1>
+        <div id="auth-container">
+            <h2 id="auth-title">Login</h2>
+            <input type="text" id="username" class="input-field" placeholder="Username" required>
+            <input type="text" id="cookie-input" class="input-field" placeholder="Cookie Code (for login)" required>
+            <button id="auth-button">Login</button>
+            <button id="toggle-auth">Switch to Signup</button>
+            <div id="cookie-message" style="display: none;">
+                <p>Here's Your Cookie Code To Login Again (Don't share and don't lose it):</p>
+                <div id="cookie-code"></div>
+            </div>
+        </div>
+        <div id="game-container" style="display: none;">
+            <div id="sentence-container">
+                <p id="sentence"></p>
+            </div>
+            <textarea id="user-input" rows="3" placeholder="Start typing here..." disabled></textarea>
+            <div id="stats">
+                <div class="stat">
+                    <span class="stat-label">Time:</span>
+                    <span id="time">60</span>s
+                </div>
+                <div class="stat">
+                    <span class="stat-label">WPM:</span>
+                    <span id="wpm">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Accuracy:</span>
+                    <span id="accuracy">100</span>%
+                </div>
+            </div>
+            <button id="start-btn">Start Game</button>
+            <button id="restart-btn" style="display: none;">Restart Game</button>
+            <div id="high-scores">
+                <h3>High Scores</h3>
+                <ul id="high-scores-list"></ul>
+            </div>
+            <button id="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        const sentenceElement = document.getElementById('sentence');
+        const userInputElement = document.getElementById('user-input');
+        const timeElement = document.getElementById('time');
+        const wpmElement = document.getElementById('wpm');
+        const accuracyElement = document.getElementById('accuracy');
+        const startButton = document.getElementById('start-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const authContainer = document.getElementById('auth-container');
+        const gameContainer = document.getElementById('game-container');
+        const authTitle = document.getElementById('auth-title');
+        const authButton = document.getElementById('auth-button');
+        const toggleAuthButton = document.getElementById('toggle-auth');
+        const usernameInput = document.getElementById('username');
+        const cookieInput = document.getElementById('cookie-input');
+        const highScoresList = document.getElementById('high-scores-list');
+        const cookieMessage = document.getElementById('cookie-message');
+        const cookieCodeElement = document.getElementById('cookie-code');
+        const logoutButton = document.getElementById('logout-btn');
+
+        let currentSentence = '';
+        let startTime;
+        let timer;
+        let gameActive = false;
+        let isLogin = true;
+        let currentUser = null;
+        let highScores = {};
+
+        function generateSentence() {
+            const words = [
+                "the", "be", "to", "of", "and", "a", "in", "that", "have", "I",
+                "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
+                "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
+                "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
+                "so", "up", "out", "if", "about", "who", "get", "which", "go", "me",
+                "when", "make", "can", "like", "time", "no", "just", "him", "know", "take",
+                "people", "into", "year", "your", "good", "some", "could", "them", "see", "other",
+                "than", "then", "now", "look", "only", "come", "its", "over", "think", "also"
+            ];
+            const sentenceLength = Math.floor(Math.random() * (15 - 10 + 1)) + 10;
+            let sentence = '';
+            for (let i = 0; i < sentenceLength; i++) {
+                sentence += words[Math.floor(Math.random() * words.length)] + ' ';
+            }
+            return sentence.trim() + '.';
+        }
+
+        function updateDisplay() {
+            const userInput = userInputElement.value;
+            let displayHtml = '';
+            
+            for (let i = 0; i < currentSentence.length; i++) {
+                if (i < userInput.length) {
+                    if (userInput[i] === currentSentence[i]) {
+                        displayHtml += `<span class="highlight">${currentSentence[i]}</span>`;
+                    } else {
+                        displayHtml += `<span class="error">${currentSentence[i]}</span>`;
+                    }
+                } else {
+                    displayHtml += currentSentence[i];
+                }
+            }
+            
+            sentenceElement.innerHTML = displayHtml;
+
+            if (userInput === currentSentence) {
+                generateNewSentence();
+            }
+        }
+
+        function generateNewSentence() {
+            currentSentence = generateSentence();
+            sentenceElement.textContent = currentSentence;
+            userInputElement.value = '';
+        }
+
+        function calculateWPM() {
+            const timeElapsed = (Date.now() - startTime) / 1000 / 60;
+            const wordsTyped = userInputElement.value.trim().split(/\s+/).length;
+            return Math.round(wordsTyped / timeElapsed);
+        }
+
+        function calculateAccuracy() {
+            const userInput = userInputElement.value;
+            let correctChars = 0;
+            
+            for (let i = 0; i < userInput.length; i++) {
+                if (userInput[i] === currentSentence[i]) {
+                    correctChars++;
+                }
+            }
+            
+            return Math.round((correctChars / currentSentence.length) * 100);
+        }
+
+        function updateStats() {
+            if (gameActive) {
+                wpmElement.textContent = calculateWPM();
+                accuracyElement.textContent = calculateAccuracy();
+            }
+        }
+
+        function startGame() {
+            gameActive = true;
+            generateNewSentence();
+            userInputElement.disabled = false;
+            userInputElement.focus();
+            startTime = Date.now();
+            
+            let timeLeft = 60;
+            timer = setInterval(() => {
+                timeLeft--;
+                timeElement.textContent = timeLeft;
+                updateStats();
+                
+                if (timeLeft === 0) {
+                    endGame();
+                }
+            }, 1000);
+            
+            startButton.style.display = 'none';
+            restartButton.style.display = 'none';
+        }
+
+        function endGame() {
+            gameActive = false;
+            clearInterval(timer);
+            userInputElement.disabled = true;
+            restartButton.style.display = 'block';
+            
+            updateStats();
+            
+            let displayHtml = '';
+            for (let i = 0; i < currentSentence.length; i++) {
+                if (i < userInputElement.value.length) {
+                    displayHtml += sentenceElement.innerHTML[i];
+                } else {
+                    displayHtml += `<span class="error">${currentSentence[i]}</span>`;
+                }
+            }
+            sentenceElement.innerHTML = displayHtml;
+
+            const finalWPM = parseInt(wpmElement.textContent);
+            if (!highScores[currentUser] || finalWPM > highScores[currentUser]) {
+                highScores[currentUser] = finalWPM;
+                updateHighScores();
+                localStorage.setItem('highScores', JSON.stringify(highScores));
+            }
+        }
+
+        function restartGame() {
+            timeElement.textContent = '60';
+            wpmElement.textContent = '0';
+            accuracyElement.textContent = '100';
+            startButton.style.display = 'block';
+            restartButton.style.display = 'none';
+            sentenceElement.textContent = '';
+            userInputElement.value = '';
+        }
+
+        function updateHighScores() {
+            highScoresList.innerHTML = '';
+            Object.entries(highScores)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .forEach(([username, score]) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${username}: ${score} WPM`;
+                    highScoresList.appendChild(li);
+                });
+        }
+
+        function generateCookieCode() {
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+
+        function toggleAuth() {
+            isLogin = !isLogin;
+            authTitle.textContent = isLogin ? "Login" : "Signup";
+            authButton.textContent = isLogin ? "Login" : "Signup";
+            toggleAuthButton.textContent = isLogin ? "Switch to Signup" : "Switch to Login";
+            cookieInput.style.display = isLogin ? "block" : "none";
+            cookieMessage.style.display = "none";
+            clearInputFields();
+        }
+
+        function handleAuth() {
+            const username = usernameInput.value;
+            const cookieCode = cookieInput.value;
+
+            if (isLogin) {
+                console.log("Attempting login for:", username);
+                console.log("Entered cookie code:", cookieCode);
+                
+                const storedCookieCode = localStorage.getItem(username);
+                console.log("Stored cookie code:", storedCookieCode);
+                
+                if (storedCookieCode && storedCookieCode === cookieCode) {
+                    console.log("Login successful");
+                    currentUser = username;
+                    showGame();
+                } else {
+                    console.log("Login failed");
+                    alert("Invalid username or cookie code. Please try again or sign up.");
+                }
+            } else {
+                if (username) {
+                    const newCookieCode = generateCookieCode();
+                    localStorage.setItem(username, newCookieCode);
+                    currentUser = username;
+                    cookieCodeElement.textContent = newCookieCode;
+                    cookieMessage.style.display = "block";
+                    console.log("New user signed up:", username);
+                    console.log("Generated cookie code:", newCookieCode);
+                } else {
+                    alert("Please enter a username for signup.");
+                }
+            }
+        }
+
+        function clearInputFields() {
+            usernameInput.value = '';
+            cookieInput.value = '';
+        }
+
+        function showGame() {
+            authContainer.style.display = 'none';
+            gameContainer.style.display = 'block';
+            cookieMessage.style.display = 'none';
+            clearInputFields();
+            const storedHighScores = localStorage.getItem('highScores');
+            if (storedHighScores) {
+                highScores = JSON.parse(storedHighScores);
+                updateHighScores();
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            gameContainer.style.display = 'none';
+            authContainer.style.display = 'block';
+            clearInputFields();
+            restartGame();
+        }
+
+        userInputElement.addEventListener('input', updateDisplay);
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', restartGame);
+        toggleAuthButton.addEventListener('click', toggleAuth);
+        authButton.addEventListener('click', handleAuth);
+        logoutButton.addEventListener('click', logout);
+
+        // Initialize the game
+        restartGame();
+        toggleAuth(); // Start in login mode
+    </script>
+</body>
+</html>
